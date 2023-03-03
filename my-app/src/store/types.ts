@@ -7,8 +7,8 @@ export interface IServerResponse {
 export interface ICategory {
   id: number;
   name: string;
-  image: string | null;
-  description: string | null;
+  image: string | undefined;
+  description: string | undefined;
 }
 
 export interface CategoryState {

@@ -1,5 +1,7 @@
 package program.controllers;
 
+import jakarta.validation.ConstraintViolationException;
+import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
@@ -7,9 +9,12 @@ import org.modelmapper.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import org.thymeleaf.util.ArrayUtils;
 import program.dto.CategoryDTO;
+import program.dto.CustomResponseEntityExceptionHandler;
 import program.dto.ResponseDTO;
 import program.entities.CategoryEntity;
 import program.repositories.CategoryRepository;
@@ -19,6 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Validated
+@ControllerAdvice
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/category")
@@ -40,9 +47,9 @@ public class HomeController {
     }
 
     @PostMapping("create")
-    public ResponseEntity<ResponseDTO> Create(@RequestBody  CategoryDTO model) {
+    public ResponseEntity<ResponseDTO> Create(@Valid @RequestBody  CategoryDTO model) {
         try {
-            if(model.getImage() != null) {
+            if(model.getImage() != "" && model.getImage() != null) {
                 String imageName = storageService.save(model.getImage());
                 model.setImage(imageName);
             }
@@ -70,17 +77,35 @@ public class HomeController {
 
     @DeleteMapping("{id}")
     public ResponseEntity<ResponseDTO> Delete(@PathVariable int id) {
+        var category = categoryRepository.findById(id).get();
+        if(category == null) {
+            var result = new ResponseDTO(true, null, "There is no category with this id");
+            return new ResponseEntity(result, HttpStatus.OK);
+        }
+        storageService.delete(category.getImage());
         categoryRepository.deleteById(id);
         var result = new ResponseDTO(true, null, "Success");
         return new ResponseEntity(result, HttpStatus.OK);
     }
 
-    @PatchMapping()
-    public ResponseEntity<ResponseDTO> Update(@RequestBody CategoryDTO model) {
-        var exists = categoryRepository.existsById(model.getId());
+    @PostMapping("update")
+    public ResponseEntity<ResponseDTO> Update(@RequestBody CategoryDTO model) throws Exception {
+        var category = categoryRepository.findById(model.getId()).get();
         ResponseDTO result = null;
-        if(exists) {
+        if(category != null) {
             var newCategory = modelMapper.map(model, CategoryEntity.class);
+            var modelImage = model.getImage();
+            if(modelImage != null) {
+                if(modelImage.startsWith("data:image")) {
+                    storageService.delete(category.getImage());
+                    String newImage = storageService.save(modelImage);
+                    newCategory.setImage(newImage);
+                }
+                else if(modelImage == "") {
+                    storageService.delete(category.getImage());
+                }
+            }
+
             categoryRepository.save(newCategory);
             result = new ResponseDTO(true, null, "Success");
             return new ResponseEntity(result, HttpStatus.OK);

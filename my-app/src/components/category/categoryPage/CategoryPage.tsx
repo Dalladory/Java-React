@@ -1,13 +1,13 @@
 import { useEffect, useState } from "react";
 import { StarIcon } from "@heroicons/react/20/solid";
 import { RadioGroup } from "@headlessui/react";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { CategoryActionTypes, IServerResponse } from "../../store/types";
-import { store } from "../../store";
-import { useTypedSelector } from "../../hooks/useTypedSelector";
+import { CategoryActionTypes, IServerResponse } from "../../../store/types";
+import { store } from "../../../store";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
 // const product = {
 //   name: "Basic Tee 6-Pack",
 //   price: "$192",
@@ -99,7 +99,10 @@ const CategoryPage = () => {
         <div className="mx-auto mt-6 max-w-2xl">
           <div className="aspect-w-3 aspect-h-4 rounded-lg lg:block">
             <img
-              src={"http://localhost:8082/api/image/" + selectedCategory?.image}
+              src={
+                "http://localhost:8082/api/image/1200_" +
+                selectedCategory?.image
+              }
               alt={selectedCategory?.name}
               className="h-full w-full object-cover object-center"
             />
@@ -128,12 +131,14 @@ const CategoryPage = () => {
               >
                 Delete
               </button>
-              <button
-                type="submit"
-                className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-              >
-                Update
-              </button>
+              <Link to={"update/?id=" + categoryId}>
+                <button
+                  type="submit"
+                  className="mt-10 flex w-full items-center justify-center rounded-md border border-transparent bg-indigo-600 py-3 px-8 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+                >
+                  Update
+                </button>
+              </Link>
             </div>
           </div>
 

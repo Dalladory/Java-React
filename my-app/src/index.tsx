@@ -6,10 +6,14 @@ import reportWebVitals from "./reportWebVitals";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import DefaultLayout from "./components/containers/default/DefaultLoyout";
 import Home from "./components/home";
-import CategoryPage from "./components/category";
+
 import { Provider } from "react-redux";
 import { store } from "./store";
 import { CategoryActionTypes } from "./store/types";
+import CreateCategoryPage from "./components/category/createCategory";
+import Example from "./components/test";
+import CategoryPage from "./components/category/categoryPage";
+import UpdateCategoryPage from "./components/category/updateCategory";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
@@ -22,7 +26,11 @@ root.render(
       <Routes>
         <Route path="/" element={<DefaultLayout />}>
           <Route index element={<Home />} />
-          <Route path="category" element={<CategoryPage />} />
+          <Route path="category">
+            <Route index element={<CategoryPage />} />
+            <Route path="create" element={<CreateCategoryPage />} />
+            <Route path="update" element={<UpdateCategoryPage />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>
