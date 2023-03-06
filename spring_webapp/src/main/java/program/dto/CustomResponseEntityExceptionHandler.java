@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class CustomResponseEntityExceptionHandler {
     @ExceptionHandler(value = MethodArgumentNotValidException.class)
     public ResponseEntity<ResponseDTO> handle(MethodArgumentNotValidException exception) {
-
         String errorMessage = exception.getBindingResult().getFieldErrors().get(0).getDefaultMessage();
         ResponseDTO result = new ResponseDTO(false,null, errorMessage);
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);

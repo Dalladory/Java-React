@@ -85,7 +85,6 @@ public class StorageService implements IStorageService {
                 out.close();
             }
         }
-
         return randomFileName;
     } catch (IOException e) {
         throw new Exception("Проблема перетворення та збереження base64", e);
