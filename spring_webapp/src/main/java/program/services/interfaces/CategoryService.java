@@ -1,15 +1,14 @@
 package program.services.interfaces;
 
-import org.springframework.http.ResponseEntity;
-import program.dto.CategoryDTO;
+import program.dto.category.CategoryDTO;
 import program.dto.ResponseDTO;
-
-import java.util.List;
+import program.dto.category.CreateCategoryDTO;
+import program.dto.category.UpdateCategoryDTO;
 
 public interface CategoryService {
     ResponseDTO GetAll();
     ResponseDTO GetById(int id);
-    ResponseDTO CreateCategory(CategoryDTO model);
-    ResponseDTO UpdateCategory(CategoryDTO model);
+    ResponseDTO CreateCategory(CreateCategoryDTO model);
+    ResponseDTO UpdateCategory(UpdateCategoryDTO model);
     ResponseDTO DeleteCategory(int id);
 }

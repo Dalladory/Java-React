@@ -1,6 +1,8 @@
 package program.services.interfaces;
 
 import program.dto.*;
+import program.dto.product.CreateProductDTO;
+import program.dto.product.UpdateProductDTO;
 
 public interface ProductService {
     ResponseDTO GetAll();

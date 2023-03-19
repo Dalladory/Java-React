@@ -12,8 +12,8 @@ export interface ICategory {
 }
 
 export interface CategoryState {
-  selectedCategory: ICategory | null;
   list: Array<ICategory>;
+  selectedCategory: ICategory | null;
 }
 
 export enum CategoryActionTypes {

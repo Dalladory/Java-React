@@ -3,12 +3,11 @@ package program.services.classes;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import program.dto.CategoryDTO;
+import program.dto.category.CategoryDTO;
 import program.dto.ResponseDTO;
-import program.dto.UpdateProductDTO;
+import program.dto.category.CreateCategoryDTO;
+import program.dto.category.UpdateCategoryDTO;
 import program.entities.CategoryEntity;
 import program.repositories.CategoryRepository;
 import program.services.interfaces.CategoryService;
@@ -51,15 +50,15 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseDTO CreateCategory(CategoryDTO model) {
+    public ResponseDTO CreateCategory(CreateCategoryDTO model) {
         try {
+            var newCategory = modelMapper.map(model, CategoryEntity.class);
             var modelImage = model.getImage();
-            if(modelImage != "" && modelImage != null) {
+            if(modelImage != null) {
                 String imageName = storageService.save(modelImage);
-                model.setImage(imageName);
+                newCategory.setImage(imageName);
             }
-            var mappedCategory = modelMapper.map(model, CategoryEntity.class);
-            categoryRepository.save(mappedCategory);
+            categoryRepository.save(newCategory);
             return new ResponseDTO(true, null, "Success");
         } catch (Exception ex) {
             return new ResponseDTO(false, null, ex.getMessage());
@@ -67,7 +66,7 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public ResponseDTO UpdateCategory(CategoryDTO model) {
+    public ResponseDTO UpdateCategory(UpdateCategoryDTO model) {
         try {
             var category = categoryRepository.findById(model.getId()).get();
             if(category == null) {
@@ -75,15 +74,17 @@ public class CategoryServiceImpl implements CategoryService {
             }
             var newCategory = modelMapper.map(model, CategoryEntity.class);
             var modelImage = model.getImage();
-            if(modelImage.startsWith("data:image")) {
-                storageService.delete(category.getImage());
-                String newImage = storageService.save(modelImage);
-                newCategory.setImage(newImage);
-            }
-            else if(modelImage == null || modelImage == "") {
+            if(modelImage == null) {
                 storageService.delete(category.getImage());
                 newCategory.setImage(null);
             }
+            if(model.getNewImage() != null) {
+                if(model.getImage() != null)
+                    storageService.delete(category.getImage());
+                String newImage = storageService.save(model.getNewImage());
+                newCategory.setImage(newImage);
+            }
+            
             categoryRepository.save(newCategory);
             return new ResponseDTO(true, null, "Success");
         }

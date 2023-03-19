@@ -3,12 +3,14 @@ package program.controllers;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import program.dto.*;
+import program.dto.product.CreateProductDTO;
+import program.dto.product.UpdateProductDTO;
 import program.services.classes.ProductServiceImpl;
-import program.services.interfaces.ProductService;
 
 @RestController
 @AllArgsConstructor
@@ -24,8 +26,8 @@ public class ProductController {
             return new ResponseEntity<>(result, HttpStatus.OK);
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
-    @PostMapping("create")
-    public ResponseEntity<ResponseDTO> Create(@Valid @RequestBody CreateProductDTO model) {
+    @PostMapping(value = "create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDTO> Create(@Valid @ModelAttribute CreateProductDTO model) {
         var result = productService.CreateProduct(model);
         if(result.success)
             return new ResponseEntity<>(result, HttpStatus.OK);

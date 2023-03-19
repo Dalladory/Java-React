@@ -15,6 +15,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@heroicons/react/20/solid";
+import { Link } from "react-router-dom";
 
 const solutions = [
   {
@@ -194,18 +195,18 @@ const DefaultHeader = () => {
               )}
             </Popover>
 
-            <a
-              href="#"
+            <Link
+              to="/"
               className="text-base font-medium text-gray-500 hover:text-gray-900"
             >
-              Pricing
-            </a>
-            <a
-              href="#"
+              Categories
+            </Link>
+            <Link
+              to="/product"
               className="text-base font-medium text-gray-500 hover:text-gray-900"
             >
-              Docs
-            </a>
+              Products
+            </Link>
 
             <Popover className="relative">
               {({ open }) => (
@@ -373,12 +374,12 @@ const DefaultHeader = () => {
                   Pricing
                 </a>
 
-                <a
-                  href="#"
+                <Link
+                  to="/product"
                   className="text-base font-medium text-gray-900 hover:text-gray-700"
                 >
-                  Docs
-                </a>
+                  Products
+                </Link>
                 {resources.map((item) => (
                   <a
                     key={item.name}

@@ -3,11 +3,14 @@ package program.controllers;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import program.dto.CategoryDTO;
+import program.dto.category.CategoryDTO;
 import program.dto.ResponseDTO;
+import program.dto.category.CreateCategoryDTO;
+import program.dto.category.UpdateCategoryDTO;
 import program.services.classes.CategoryServiceImpl;
 
 @Validated
@@ -26,8 +29,8 @@ public class CategoryController {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("create")
-    public ResponseEntity<ResponseDTO> Create(@Valid @RequestBody  CategoryDTO model) {
+    @PostMapping(value = "create", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDTO> Create(@Valid @ModelAttribute CreateCategoryDTO model) {
         var result = categoryService.CreateCategory(model);
         if(result.success)
             return new ResponseEntity<>(result, HttpStatus.OK);
@@ -50,8 +53,8 @@ public class CategoryController {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("update")
-    public ResponseEntity<ResponseDTO> Update(@Valid @RequestBody CategoryDTO model) {
+    @PostMapping(value = "update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDTO> Update(@Valid @ModelAttribute UpdateCategoryDTO model) {
         var result = categoryService.UpdateCategory(model);
         if(result.success)
             return new ResponseEntity<>(result, HttpStatus.OK);

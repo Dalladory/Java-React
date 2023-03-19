@@ -6,6 +6,9 @@ import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.Cascade;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.util.Date;
 import java.util.List;
@@ -31,6 +34,6 @@ public class ProductEntity {
     @JoinColumn(name="category_id", nullable = false)
     private CategoryEntity category;
 
-    @OneToMany(mappedBy="product")
+    @OneToMany(mappedBy="product", cascade = CascadeType.REMOVE, orphanRemoval = true)
     private List<ProductImageEntity> productImages;
 }

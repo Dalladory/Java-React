@@ -3,6 +3,8 @@ package program.storage;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -90,6 +92,41 @@ public class StorageService implements IStorageService {
         throw new Exception("Проблема перетворення та збереження base64", e);
     }
 }
+
+    @Override
+    public String save(MultipartFile file) throws Exception {
+        try {
+            UUID uuid = UUID.randomUUID();
+            //var extension = StringUtils.getFilenameExtension(file.getOriginalFilename());
+            var extension = "jpg";
+            String randomFileName = uuid.toString()+"."+extension; //робимо ім'я файліка: унікальне ім'я + розширення
+            //java.util.Base64.Decoder decoder = Base64.getDecoder(); //створюємо екземпляр декодера
+            byte[] bytes = new byte[0]; // створюємо массив байтів
+            bytes = file.getBytes(); // декодуємо Base64 до вайтів
+            int [] imageSize = {32, 150, 300, 600, 1200}; // масив розмірів фотографій
+            try (var byteStream = new ByteArrayInputStream(bytes)) {
+                var image = ImageIO.read(byteStream);
+                for(int size : imageSize){ // в циклі створюємо фотки кожного розміру
+                    String directory= rootLocation.toString() +"/"+size+"_"+randomFileName; //створюємо папку де фотка буде зберігатися
+
+                    //створюємо буфер для нової фотографії, де важливо вказуємо розширення яке буде у фотки та розмір (32х32, 150х150)
+                    //по типу оперативна пам'ять
+                    BufferedImage newImg = ImageUtils.resizeImage(image,
+                            extension=="jpg"? ImageUtils.IMAGE_JPEG : ImageUtils.IMAGE_PNG, size,size);
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream(); //створюємо Stream
+                    //фото записуємо у потік для отримання масиву байтів
+                    ImageIO.write(newImg, extension, byteArrayOutputStream); //за допомогою цього Stream записуємо в буфер фотографію згідно з розширенням
+                    byte [] newBytes = byteArrayOutputStream.toByteArray(); //з цього Stream знову отримуємо байти
+                    FileOutputStream out = new FileOutputStream(directory);
+                    out.write(newBytes); //байти зберігаємо у фійлову систему на сервері
+                    out.close();
+                }
+            }
+            return randomFileName;
+        } catch (IOException e) {
+            throw new Exception("Проблема перетворення та збереження base64", e);
+        }
+    }
 
     @Override
     public void delete(String fileName) {

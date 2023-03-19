@@ -2,13 +2,16 @@ import axios from "axios";
 import { useFormik, FormikProvider, Form, Field } from "formik";
 import { ChangeEvent, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "react-toastify";
 import { store } from "../../../store";
+import { FaTrash } from "react-icons/fa";
 import {
   CategoryActionTypes,
   ICategory,
   IServerResponse,
 } from "../../../store/types";
 import { CreateCategorySchema } from "../../../validation/schemas";
+import { IUpdateCategory } from "../types";
 
 const UpdateCategoryPage = () => {
   const navigate = useNavigate();
@@ -28,37 +31,59 @@ const UpdateCategoryPage = () => {
       });
   }, []);
 
-  const onSubmitHandler = (values: ICategory) => {
+  const onSubmitHandler = (values: IUpdateCategory) => {
     console.log(values);
 
     axios
       .post<IServerResponse>(
         "http://localhost:8082/api/category/update",
-        values
+        values,
+        {
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
+        }
       )
-      .then((data) => {
-        navigate("/");
+      .then(({ data }) => {
+        if (data.success) {
+          navigate("/");
+          toast.success(data.message);
+        } else {
+          toast.error(data.message);
+        }
       });
   };
 
   const changeImageHandler = (e: ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (files) {
-      const fileReader = new FileReader();
-      fileReader.readAsDataURL(files[0]);
-      fileReader.onload = (data: any) => {
-        const result = data.target.result as string;
-        setFieldValue("image", result);
-      };
+      var file = files[0];
+      if (values.image != undefined) {
+        setFieldValue("image", undefined);
+      }
+      setFieldValue("newImage", file);
     }
-    e.target.value = "";
+    //e.target.value = "";
   };
-  const initialValues: ICategory = {
+
+  const DeleteImageHandler = (e: any) => {
+    e.preventDefault();
+    setFieldValue("image", undefined);
+  };
+
+  const DeleteNewImageHandler = (e: any) => {
+    e.preventDefault();
+    setFieldValue("newImage", undefined);
+  };
+
+  const initialValues: IUpdateCategory = {
     id: 0,
     name: "",
     description: undefined,
-    image: "",
+    image: undefined,
+    newImage: undefined,
   };
+
   const formik = useFormik({
     initialValues: initialValues,
     onSubmit: onSubmitHandler,
@@ -148,7 +173,9 @@ const UpdateCategoryPage = () => {
                           htmlFor="image"
                           className="inline-block w-40 overflow-hidden bg-gray-100"
                         >
-                          {values.image === "" ? (
+                          {/* show empty image id don't have amy images */}
+                          {values.image == undefined &&
+                          values.newImage == undefined ? (
                             <svg
                               className="h-full w-full text-gray-300"
                               fill="currentColor"
@@ -156,16 +183,44 @@ const UpdateCategoryPage = () => {
                             >
                               <path d="M24 20.993V24H0v-2.996A14.977 14.977 0 0112.004 15c4.904 0 9.26 2.354 11.996 5.993zM16.002 8.999a4 4 0 11-8 0 4 4 0 018 0z" />
                             </svg>
-                          ) : (
-                            <img
-                              src={
-                                values.image?.startsWith("data:image")
-                                  ? values.image
-                                  : "http://localhost:8082/api/image/300_" +
+                          ) : null}
+                          {/* show old image */}
+                          {values.image != undefined ? (
+                            <>
+                              <div
+                                style={{ cursor: "pointer" }}
+                                className="flex justify-center ... border-2 border-black  rounded-lg ... "
+                                onClick={DeleteImageHandler}
+                              >
+                                <FaTrash className="m-2 " />
+                              </div>
+                              <div className="p-2">
+                                <img
+                                  src={
+                                    "http://localhost:8082/api/image/300_" +
                                     values.image
-                              }
-                            />
-                          )}
+                                  }
+                                />
+                              </div>
+                            </>
+                          ) : null}
+                          {/* show new image */}
+                          {values.newImage != undefined ? (
+                            <>
+                              <div
+                                style={{ cursor: "pointer" }}
+                                className="flex justify-center ... border-2 border-black  rounded-lg ... "
+                                onClick={DeleteNewImageHandler}
+                              >
+                                <FaTrash className="m-2 " />
+                              </div>
+                              <div className="p-2">
+                                <img
+                                  src={URL.createObjectURL(values.newImage)}
+                                />
+                              </div>
+                            </>
+                          ) : null}
                         </label>
                         <label
                           htmlFor="image"
@@ -175,17 +230,6 @@ const UpdateCategoryPage = () => {
                         focus:ring-indigo-500 focus:ring-offset-2"
                         >
                           Обрати фото
-                        </label>
-                        <label
-                          onClick={() => {
-                            setFieldValue("image", "");
-                          }}
-                          className="ml-5 rounded-md border border-gray-300 bg-white 
-                        py-2 px-3 text-sm font-medium leading-4 text-gray-700 
-                        shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 
-                        focus:ring-indigo-500 focus:ring-offset-2"
-                        >
-                          Delete photo
                         </label>
                         <input
                           type="file"

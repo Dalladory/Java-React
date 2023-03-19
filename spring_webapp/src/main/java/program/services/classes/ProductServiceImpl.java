@@ -4,7 +4,13 @@ import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import program.dto.*;
+import program.dto.category.CategoryDTO;
+import program.dto.product.CreateProductDTO;
+import program.dto.product.ProductDTO;
+import program.dto.product.ProductImageDTO;
+import program.dto.product.UpdateProductDTO;
 import program.entities.CategoryEntity;
 import program.entities.ProductEntity;
 import program.entities.ProductImageEntity;
@@ -13,7 +19,6 @@ import program.repositories.ProductRepository;
 import program.services.interfaces.ProductService;
 import program.storage.StorageService;
 
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -27,8 +32,8 @@ public class ProductServiceImpl implements ProductService {
     public ResponseDTO GetAll() {
         try{
             var products = productRepository.findAll();
-            var mappedProducts = modelMapper.map(products, new TypeToken<ProductDTO>(){}.getType());
-            return new ResponseDTO(true, products, "Success");
+            List<ProductDTO> mappedProducts = modelMapper.map(products, new TypeToken<List<ProductDTO>>(){}.getType());
+            return new ResponseDTO(true, mappedProducts, "Success");
         }
         catch (Exception ex) {
             return new ResponseDTO(false, null, ex.getMessage());
@@ -61,17 +66,17 @@ public class ProductServiceImpl implements ProductService {
 
             var images = model.getProductImages();
             if(images != null && images.size() > 0) {
-                for (ProductImageDTO img:images) {
-                    if(img.getImage().startsWith("data:image")) {
-                        var result = storageService.save(img.getImage());
-                        var newImg = modelMapper.map(img, ProductImageEntity.class);
-                        newImg.setImage(result);
-                        newImg.setProduct(newProduct);
-                        productImageRepository.save(newImg);
-                    }
+                int priority = 1;
+                for (MultipartFile img:images) {
+                    var name = storageService.save(img);
+                    var newImg = new ProductImageEntity();
+                    newImg.setImage(name);
+                    newImg.setProduct(newProduct);
+                    newImg.setPriority(priority);
+                    productImageRepository.save(newImg);
+                    priority++;
                 }
             }
-
             return new ResponseDTO(true, null, "Success");
         } catch (Exception ex) {
             return new ResponseDTO(false, null, ex.getMessage());
@@ -86,35 +91,28 @@ public class ProductServiceImpl implements ProductService {
                 return new ResponseDTO(true, null, "There is no product with this id");
             }
 
-            var modelImages = model.getProductImages();
-            if(modelImages == null || modelImages.size() == 0) {
-                DeleteProductImages(product.getProductImages());
-            }else {
-                for (ProductImageDTO img:modelImages
-                ) {
-                    if(img.getImage().startsWith("data:image")){
-                        ProductImageEntity newImg = new ProductImageEntity();
-                        var isImageExistsInBase = productImageRepository.existsById(img.getId());
-                        if(isImageExistsInBase) {
-                            newImg = productImageRepository.getById(img.getId());
-                            var oldImgName = newImg.getImage();
-                            if(oldImgName != null && oldImgName != "") {
-                                storageService.delete(newImg.getImage());
-                            }
-                        }
-                        var result = storageService.save(img.getImage());
-                        newImg.setImage(result);
-                        newImg.setPriority(img.getPriority());
-                        productImageRepository.save(newImg);
-                    }
-                }
-            }
             var category = new CategoryEntity();
             category.setId(model.getCategory_id());
             var newProduct = modelMapper.map(model, ProductEntity.class);
             newProduct.setCategory(category);
-
             productRepository.save(newProduct);
+
+            DeleteProductImages(product.getProductImages(), true);
+
+            var modelImages = model.getProductImages();
+            if(modelImages != null && modelImages.size() > 0) {
+                int priority = 1;
+                for (MultipartFile img:modelImages) {
+                    var name = storageService.save(img);
+                    var newImg = new ProductImageEntity();
+                    newImg.setImage(name);
+                    newImg.setProduct(newProduct);
+                    newImg.setPriority(priority);
+                    productImageRepository.save(newImg);
+                    priority++;
+                }
+            }
+
             return new ResponseDTO(true, null, "Success");
         }
         catch (Exception ex) {
@@ -130,12 +128,7 @@ public class ProductServiceImpl implements ProductService {
                 return new ResponseDTO(true, null, "There is no product with this id");
             }
             var images = product.getProductImages();
-            if(images.size() > 0) {
-                for (ProductImageEntity img:images
-                     ) {
-                    storageService.delete(img.getImage());
-                }
-            }
+            DeleteProductImages(images, false);
             productRepository.deleteById(id);
             return new ResponseDTO(true, null, "Success");
         }
@@ -144,11 +137,12 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    private void DeleteProductImages(List<ProductImageEntity> images) {
+    private void DeleteProductImages(List<ProductImageEntity> images, boolean deleteFromBase) {
         for (ProductImageEntity img:images
              ) {
             storageService.delete(img.getImage());
-            productImageRepository.delete(img);
+            if(deleteFromBase)
+                productImageRepository.delete(img);
         }
     }
 }

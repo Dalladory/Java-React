@@ -1,9 +1,8 @@
-package program.dto;
+package program.dto.product;
 
-import jakarta.persistence.*;
 import lombok.Data;
+import program.dto.category.CategoryDTO;
 import program.entities.CategoryEntity;
-import program.entities.ProductImageEntity;
 
 import java.util.Date;
 import java.util.List;
@@ -20,7 +19,7 @@ public class ProductDTO {
 
     private Date dateCreated;
 
-    private CategoryEntity category;
+    private CategoryDTO category;
 
     private List<ProductImageDTO> productImages;
 }

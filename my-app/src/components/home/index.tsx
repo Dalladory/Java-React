@@ -15,7 +15,7 @@ const Home = () => {
 
   useEffect(() => {
     axios
-      .get<IServerResponse>("http://localhost:8082/api/category")
+      .get<IServerResponse>("http://localhost:8082/api/category/getall")
       .then((resp) => {
         const { payload } = resp.data;
         store.dispatch({
@@ -42,7 +42,7 @@ const Home = () => {
             <div className="mt-6 space-y-12 lg:grid lg:grid-cols-3 lg:gap-x-6 lg:space-y-0">
               {list.map((category: ICategory) => (
                 <>
-                  <div key={category.name} className="group relative">
+                  <div key={category.id} className="group relative">
                     <div className="relative h-80 w-full overflow-hidden rounded-lg bg-white group-hover:opacity-75 sm:aspect-w-2 sm:aspect-h-1 sm:h-64 lg:aspect-w-1 lg:aspect-h-1">
                       <img
                         src={

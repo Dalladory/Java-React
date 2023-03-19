@@ -6,7 +6,7 @@ const initialState: CategoryState = {
 };
 
 export const categoryReducer = (
-  state = initialState,
+  state: CategoryState = initialState,
   action: CategoryActions
 ): CategoryState => {
   switch (action.type) {

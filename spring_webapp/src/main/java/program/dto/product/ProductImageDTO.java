@@ -1,4 +1,4 @@
-package program.dto;
+package program.dto.product;
 
 import jakarta.persistence.*;
 import lombok.Data;

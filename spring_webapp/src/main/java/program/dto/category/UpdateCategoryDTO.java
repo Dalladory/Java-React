@@ -1,29 +1,19 @@
-package program.dto;
+package program.dto.category;
 
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import lombok.ToString;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 @Data
-public class CategoryDTO {
+public class UpdateCategoryDTO {
     private int id;
     @NotBlank(message = "Name is required")
     @Length(min = 3, message = "Name minimum length 3")
     private String  name;
     private String image;
+    private MultipartFile newImage;
     @NotBlank(message = "Description is required")
     @Length(min = 3, message = "Description minimum length 3")
     private String description;
-    public CategoryDTO(){}
-    public CategoryDTO(String name){
-        this.name = name;
-    }
-
-    @Override
-    public String toString() {
-        return name;
-    }
-
 }
