@@ -2,24 +2,25 @@ import axios from "axios";
 import { type } from "os";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { useTypedSelector } from "../../hooks/useTypedSelector";
-import { store } from "../../store/index";
+import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import requests from "../../../services/apiService";
+import { store } from "../../../store";
 import {
   CategoryActionTypes,
   ICategory,
   IServerResponse,
-} from "../../store/types";
+} from "../../../store/types";
 
-const Home = () => {
+const CategoriesListPage = () => {
   const { list } = useTypedSelector((store) => store.categoryReducer);
 
   useEffect(() => {
-    axios
+    requests
       .get<IServerResponse>("http://localhost:8082/api/category/getall")
       .then((resp) => {
         const { payload } = resp.data;
         store.dispatch({
-          type: CategoryActionTypes.SET_LIST,
+          type: CategoryActionTypes.SET_CATEGORIES_LIST,
           payload: payload,
         });
       });
@@ -73,4 +74,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default CategoriesListPage;

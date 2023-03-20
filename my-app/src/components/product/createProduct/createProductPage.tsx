@@ -13,6 +13,7 @@ import { ICreateProduct } from "../../../store/productTypes";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { store } from "../../../store";
 import { FaTrash } from "react-icons/fa";
+import requests, { HttpContentTypes } from "../../../services/apiService";
 
 const CreateProductPage = () => {
   const navigate = useNavigate();
@@ -25,7 +26,7 @@ const CreateProductPage = () => {
         .then((resp) => {
           const { payload } = resp.data;
           store.dispatch({
-            type: CategoryActionTypes.SET_LIST,
+            type: CategoryActionTypes.SET_CATEGORIES_LIST,
             payload: payload,
           });
         });
@@ -35,15 +36,11 @@ const CreateProductPage = () => {
   const onSubmitHandler = (values: ICreateProduct) => {
     console.log(values);
 
-    axios
+    requests
       .post<IServerResponse>(
         "http://localhost:8082/api/product/create",
         values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        HttpContentTypes.MULTIPART_FORM_DATA
       )
       .then(({ data }) => {
         if (data.success) {

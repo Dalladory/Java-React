@@ -24,6 +24,17 @@ export interface ICreateProduct {
   productImages: Array<File>;
 }
 
+export interface IUpdateProduct {
+  id: number;
+  category_id: number;
+  name: string;
+  price: number;
+  description: string;
+  //productImages: Array<IProductImage>;
+  imagesToDelete: Array<string>;
+  newImages: Array<File>;
+}
+
 export interface ProductState {
   products: Array<IProduct>;
   selectedProduct: IProduct | null;

@@ -14,6 +14,7 @@ import program.dto.product.UpdateProductDTO;
 import program.entities.CategoryEntity;
 import program.entities.ProductEntity;
 import program.entities.ProductImageEntity;
+import program.mapper.ProductMapper;
 import program.repositories.ProductImageRepository;
 import program.repositories.ProductRepository;
 import program.services.interfaces.ProductService;
@@ -27,6 +28,7 @@ public class ProductServiceImpl implements ProductService {
     private ProductRepository productRepository;
     private ProductImageRepository productImageRepository;
     private ModelMapper modelMapper;
+    private ProductMapper productMapper;
     private StorageService storageService;
     @Override
     public ResponseDTO GetAll() {
@@ -91,27 +93,27 @@ public class ProductServiceImpl implements ProductService {
                 return new ResponseDTO(true, null, "There is no product with this id");
             }
 
-            var category = new CategoryEntity();
-            category.setId(model.getCategory_id());
-            var newProduct = modelMapper.map(model, ProductEntity.class);
-            newProduct.setCategory(category);
-            productRepository.save(newProduct);
-
-            DeleteProductImages(product.getProductImages(), true);
-
-            var modelImages = model.getProductImages();
+            DeleteProductImagesByName(model.getImagesToDelete(), true);
+            var modelImages = model.getNewImages();
             if(modelImages != null && modelImages.size() > 0) {
-                int priority = 1;
+                int priority = product.getProductImages().size() + 1;
                 for (MultipartFile img:modelImages) {
                     var name = storageService.save(img);
                     var newImg = new ProductImageEntity();
                     newImg.setImage(name);
-                    newImg.setProduct(newProduct);
+                    newImg.setProduct(product);
                     newImg.setPriority(priority);
                     productImageRepository.save(newImg);
                     priority++;
                 }
             }
+
+            var category = new CategoryEntity();
+            category.setId(model.getCategory_id());
+
+            product = productMapper.UpdateProductToEntity(model);
+            product.setCategory(category);
+            productRepository.save(product);
 
             return new ResponseDTO(true, null, "Success");
         }
@@ -138,11 +140,25 @@ public class ProductServiceImpl implements ProductService {
     }
 
     private void DeleteProductImages(List<ProductImageEntity> images, boolean deleteFromBase) {
-        for (ProductImageEntity img:images
-             ) {
-            storageService.delete(img.getImage());
-            if(deleteFromBase)
-                productImageRepository.delete(img);
+        if(images != null) {
+            for (ProductImageEntity img : images
+            ) {
+                storageService.delete(img.getImage());
+                if (deleteFromBase)
+                    productImageRepository.delete(img);
+            }
+        }
+    }
+    private void DeleteProductImagesByName(List<String> images, boolean deleteFromBase) {
+        if(images != null) {
+            for (String img : images
+            ) {
+                storageService.delete(img);
+                if (deleteFromBase) {
+                    ProductImageEntity image = productImageRepository.findByImage(img);
+                    productImageRepository.delete(image);
+                }
+            }
         }
     }
 }

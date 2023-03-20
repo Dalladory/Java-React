@@ -3,24 +3,19 @@ import { type } from "os";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
+import requests from "../../../services/apiService";
 import { store } from "../../../store";
 import { IProduct, ProductActionTypes } from "../../../store/productTypes";
 import { IServerResponse } from "../../../store/types";
 
 const ProductListPage = () => {
   const { products } = useTypedSelector((store) => store.productReducer);
-  //const products: Array<IProduct> = [];
-  console.log("products ", products);
 
   useEffect(() => {
-    console.log("useeffect");
-    axios
+    requests
       .get<IServerResponse>("http://localhost:8082/api/product/getall")
       .then((resp) => {
-        console.log("dwefwefwe");
-
         const { payload } = resp.data;
-        console.log("payload: ", payload);
         store.dispatch({
           type: ProductActionTypes.SET_PRODUCTS_LIST,
           payload: payload,

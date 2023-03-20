@@ -10,12 +10,12 @@ export const categoryReducer = (
   action: CategoryActions
 ): CategoryState => {
   switch (action.type) {
-    case CategoryActionTypes.SET_LIST:
+    case CategoryActionTypes.SET_CATEGORIES_LIST:
       return {
         ...state,
         list: action.payload,
       };
-    case CategoryActionTypes.SET_SELECTED:
+    case CategoryActionTypes.SET_SELECTED_CATEGORY:
       return {
         ...state,
         selectedCategory: action.payload,

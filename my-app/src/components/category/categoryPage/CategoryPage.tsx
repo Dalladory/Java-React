@@ -9,6 +9,7 @@ import { CategoryActionTypes, IServerResponse } from "../../../store/types";
 import { store } from "../../../store";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { toast } from "react-toastify";
+import requests from "../../../services/apiService";
 
 function classNames(...classes: any) {
   return classes.filter(Boolean).join(" ");
@@ -23,12 +24,12 @@ const CategoryPage = () => {
   const categoryId = searchParams.get("id");
 
   useEffect(() => {
-    axios
+    requests
       .get<IServerResponse>(`http://localhost:8082/api/category/${categoryId}`)
       .then((resp) => {
         const payload = resp.data;
         store.dispatch({
-          type: CategoryActionTypes.SET_SELECTED,
+          type: CategoryActionTypes.SET_SELECTED_CATEGORY,
           payload: payload.payload,
         });
       });
@@ -36,8 +37,8 @@ const CategoryPage = () => {
 
   const deleteHandler = () => {
     const id = searchParams.get("id");
-    axios
-      .delete(`http://localhost:8082/api/category/${id}`)
+    requests
+      .delete<IServerResponse>(`http://localhost:8082/api/category/${id}`)
       .then(({ data }) => {
         if (data.success) {
           navigate("/");

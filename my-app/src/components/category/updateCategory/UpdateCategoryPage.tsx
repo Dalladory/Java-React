@@ -12,6 +12,7 @@ import {
 } from "../../../store/types";
 import { CreateCategorySchema } from "../../../validation/schemas";
 import { IUpdateCategory } from "../types";
+import requests, { HttpContentTypes } from "../../../services/apiService";
 
 const UpdateCategoryPage = () => {
   const navigate = useNavigate();
@@ -19,12 +20,12 @@ const UpdateCategoryPage = () => {
   const categoryId = searchParams.get("id");
 
   useEffect(() => {
-    axios
+    requests
       .get<IServerResponse>(`http://localhost:8082/api/category/${categoryId}`)
       .then((resp) => {
         const payload = resp.data;
         store.dispatch({
-          type: CategoryActionTypes.SET_SELECTED,
+          type: CategoryActionTypes.SET_SELECTED_CATEGORY,
           payload: payload.payload,
         });
         setValues(payload.payload);
@@ -34,15 +35,11 @@ const UpdateCategoryPage = () => {
   const onSubmitHandler = (values: IUpdateCategory) => {
     console.log(values);
 
-    axios
+    requests
       .post<IServerResponse>(
         "http://localhost:8082/api/category/update",
         values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        HttpContentTypes.MULTIPART_FORM_DATA
       )
       .then(({ data }) => {
         if (data.success) {

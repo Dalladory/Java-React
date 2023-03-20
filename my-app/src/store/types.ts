@@ -17,18 +17,20 @@ export interface CategoryState {
 }
 
 export enum CategoryActionTypes {
-  SET_LIST = "SET_LIST",
-  SET_SELECTED = "SET_SELECTED",
+  SET_CATEGORIES_LIST = "SET_CATEGORIES_LIST",
+  SET_SELECTED_CATEGORY = "SET_SELECTED_CATEGORY",
 }
 
-export interface SetListAction {
-  type: CategoryActionTypes.SET_LIST;
+export interface SetCategoriesListAction {
+  type: CategoryActionTypes.SET_CATEGORIES_LIST;
   payload: Array<ICategory>;
 }
 
-export interface SetSelectedAction {
-  type: CategoryActionTypes.SET_SELECTED;
+export interface SetSelectedCategoryAction {
+  type: CategoryActionTypes.SET_SELECTED_CATEGORY;
   payload: ICategory | null;
 }
 
-export type CategoryActions = SetListAction | SetSelectedAction;
+export type CategoryActions =
+  | SetCategoriesListAction
+  | SetSelectedCategoryAction;

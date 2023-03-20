@@ -10,6 +10,7 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,11 +30,11 @@ public class ProductEntity {
     private String description;
     @Temporal(TemporalType.TIMESTAMP)
     private Date dateCreated;
-    private boolean isDelete;
+    private boolean isDelete = false;
     @ManyToOne
     @JoinColumn(name="category_id", nullable = false)
     private CategoryEntity category;
 
     @OneToMany(mappedBy="product", cascade = CascadeType.REMOVE, orphanRemoval = true)
-    private List<ProductImageEntity> productImages;
+    private List<ProductImageEntity> productImages = new ArrayList<>();
 }

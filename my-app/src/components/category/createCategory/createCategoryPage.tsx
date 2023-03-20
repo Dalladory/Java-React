@@ -6,19 +6,16 @@ import { ICategory, IServerResponse } from "../../../store/types";
 import { CreateCategorySchema } from "../../../validation/schemas";
 import { toast } from "react-toastify";
 import { ICreateCategory } from "../types";
+import requests, { HttpContentTypes } from "../../../services/apiService";
 
 const CreateCategoryPage = () => {
   const navigate = useNavigate();
   const onSubmitHandler = (values: ICreateCategory) => {
-    axios
+    requests
       .post<IServerResponse>(
         "http://localhost:8082/api/category/create",
         values,
-        {
-          headers: {
-            "Content-Type": "multipart/form-data",
-          },
-        }
+        HttpContentTypes.MULTIPART_FORM_DATA
       )
       .then(({ data }) => {
         if (data.success) {

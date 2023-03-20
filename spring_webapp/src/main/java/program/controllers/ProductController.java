@@ -49,8 +49,8 @@ public class ProductController {
         return new ResponseEntity<>(result, HttpStatus.BAD_REQUEST);
     }
 
-    @PostMapping("update")
-    public ResponseEntity<ResponseDTO> Update(@Valid @RequestBody UpdateProductDTO model) {
+    @PostMapping(value = "update", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ResponseDTO> Update(@Valid @ModelAttribute UpdateProductDTO model) {
         var result = productService.UpdateProduct(model);
         if(result.success)
             return new ResponseEntity<>(result, HttpStatus.OK);
