@@ -1,5 +1,6 @@
 package program.controllers;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +19,7 @@ import program.services.classes.CategoryServiceImpl;
 @RestController
 @AllArgsConstructor
 @RequestMapping("/api/category")
+//@SecurityRequirement(name = "vovan-api")
 public class CategoryController {
     private CategoryServiceImpl categoryService;
 

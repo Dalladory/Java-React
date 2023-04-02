@@ -14,7 +14,7 @@ import {
   IProductImage,
   IUpdateProduct,
   ProductActionTypes,
-} from "../../../store/productTypes";
+} from "../../../store/types/productTypes";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { store } from "../../../store";
 import { FaTrash } from "react-icons/fa";

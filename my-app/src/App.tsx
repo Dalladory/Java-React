@@ -11,8 +11,13 @@ import CreateProductPage from "./components/product/createProduct";
 import UpdateProductPage from "./components/product/updateProduct";
 import Loader from "./components/common/Loader/Loader";
 import CategoriesListPage from "./components/category/list";
+import LoginPage from "./account/login";
+import RegisterPage from "./account/register";
+import { useTypedSelector } from "./hooks/useTypedSelector";
 
 export const App: React.FC = () => {
+  const { isAuthorized } = useTypedSelector((store) => store.userReducer);
+
   return (
     <>
       <Loader />
@@ -31,6 +36,12 @@ export const App: React.FC = () => {
             <Route path="create" element={<CreateProductPage />} />
             <Route path="update" element={<UpdateProductPage />} />
           </Route>
+          {!isAuthorized && (
+            <Route path="account">
+              <Route path="login" element={<LoginPage />} />
+              <Route path="register" element={<RegisterPage />} />
+            </Route>
+          )}
         </Route>
       </Routes>
     </>

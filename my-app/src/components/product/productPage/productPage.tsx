@@ -9,7 +9,7 @@ import { CategoryActionTypes, IServerResponse } from "../../../store/types";
 import { store } from "../../../store";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { toast } from "react-toastify";
-import { ProductActionTypes } from "../../../store/productTypes";
+import { ProductActionTypes } from "../../../store/types/productTypes";
 import requests from "../../../services/apiService";
 
 function classNames(...classNamees: any) {

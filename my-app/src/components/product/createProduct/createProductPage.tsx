@@ -9,7 +9,7 @@ import {
 } from "../../../store/types";
 import { CreateProductSchema } from "../../../validation/schemas";
 import { toast } from "react-toastify";
-import { ICreateProduct } from "../../../store/productTypes";
+import { ICreateProduct } from "../../../store/types/productTypes";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import { store } from "../../../store";
 import { FaTrash } from "react-icons/fa";

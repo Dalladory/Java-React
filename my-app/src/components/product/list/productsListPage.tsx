@@ -5,7 +5,10 @@ import { Link } from "react-router-dom";
 import { useTypedSelector } from "../../../hooks/useTypedSelector";
 import requests from "../../../services/apiService";
 import { store } from "../../../store";
-import { IProduct, ProductActionTypes } from "../../../store/productTypes";
+import {
+  IProduct,
+  ProductActionTypes,
+} from "../../../store/types/productTypes";
 import { IServerResponse } from "../../../store/types";
 
 const ProductListPage = () => {
