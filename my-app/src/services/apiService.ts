@@ -15,6 +15,10 @@ export const setJwtToHeaderFromLC = () => {
   }
 };
 
+export const deleteJwtFromHeader = () => {
+  instance.defaults.headers.common.Authorization = undefined;
+};
+
 instance.interceptors.request.use(
   (config: any) => {
     store.dispatch({ type: IsLoadingActionsTypes.SET_LOADING, payload: true });

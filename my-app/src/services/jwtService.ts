@@ -1,4 +1,4 @@
-import { setJwtToHeaderFromLC } from "./apiService";
+import { deleteJwtFromHeader, setJwtToHeaderFromLC } from "./apiService";
 
 export const setJwtToken = (token: string) => {
   localStorage.token = token;
@@ -7,4 +7,9 @@ export const setJwtToken = (token: string) => {
 
 export const getJwtToken = (): string => {
   return localStorage.token as string;
+};
+
+export const deleteJwtToken = () => {
+  localStorage.removeItem("token");
+  deleteJwtFromHeader();
 };

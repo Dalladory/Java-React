@@ -35,6 +35,7 @@ export interface UserState {
 
 export enum UserActionTypes {
   AUTH_USER = "AUTH_USER",
+  LOG_OUT_USER = "LOG_OUT_USER",
 }
 
 export interface AuthUserAction {
@@ -42,4 +43,7 @@ export interface AuthUserAction {
   payload: IUser;
 }
 
-export type UserActions = AuthUserAction;
+export interface LogOutUserAction {
+  type: UserActionTypes.LOG_OUT_USER;
+}
+export type UserActions = AuthUserAction | LogOutUserAction;

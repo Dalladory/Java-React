@@ -7,6 +7,7 @@ import { CreateCategorySchema } from "../../../validation/schemas";
 import { toast } from "react-toastify";
 import { ICreateCategory } from "../types";
 import requests, { HttpContentTypes } from "../../../services/apiService";
+import { useActions } from "../../../hooks/useActions";
 
 const CreateCategoryPage = () => {
   const navigate = useNavigate();

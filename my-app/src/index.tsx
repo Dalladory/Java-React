@@ -9,6 +9,7 @@ import { setJwtToHeaderFromLC } from "./services/apiService";
 import { useTypedSelector } from "./hooks/useTypedSelector";
 import { getJwtToken } from "./services/jwtService";
 import { IUser, UserActionTypes } from "./store/types/userTypes";
+import { AuthUserFromLC } from "./store/actions/userActions";
 
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
@@ -16,14 +17,7 @@ const root = ReactDOM.createRoot(
 
 const token = getJwtToken();
 if (token) {
-  const user: IUser = {
-    id: 0,
-    name: "",
-    surname: "",
-    email: "",
-  };
-  setJwtToHeaderFromLC();
-  store.dispatch({ type: UserActionTypes.AUTH_USER, payload: user });
+  AuthUserFromLC()(store.dispatch);
 }
 
 //store.dispatch({ type: CategoryActionTypes.SET_LIST, payload: [] });

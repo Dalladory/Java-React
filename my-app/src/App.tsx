@@ -14,10 +14,11 @@ import CategoriesListPage from "./components/category/list";
 import { useTypedSelector } from "./hooks/useTypedSelector";
 import Login from "./account/login";
 import Register from "./account/register";
+import { useActions } from "./hooks/useActions";
+import LogOutUser from "./account/logOut";
 
 export const App: React.FC = () => {
   const { isAuthorized } = useTypedSelector((store) => store.userReducer);
-
   return (
     <>
       <Loader />
@@ -40,6 +41,11 @@ export const App: React.FC = () => {
             <Route path="account">
               <Route path="login" element={<Login />} />
               <Route path="register" element={<Register />} />
+            </Route>
+          )}
+          {isAuthorized && (
+            <Route path="account">
+              <Route path="logout" element={<LogOutUser />} />
             </Route>
           )}
         </Route>

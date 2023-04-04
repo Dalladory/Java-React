@@ -13,6 +13,8 @@ export const userReducer = (
   switch (payload.type) {
     case UserActionTypes.AUTH_USER:
       return { ...state, isAuthorized: true, user: payload.payload };
+    case UserActionTypes.LOG_OUT_USER:
+      return { ...initialState };
     default:
       return { ...state };
   }
