@@ -1,6 +1,6 @@
 import { FcGoogle } from "react-icons/fc";
 import { AiFillFacebook } from "react-icons/ai";
-
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 import loginImg from "../../assets/login.jpg";
 import { Link, useNavigate } from "react-router-dom";
 import { Field, Form, FormikProvider, useFormik } from "formik";
@@ -17,7 +17,13 @@ import { store } from "../../store";
 
 const LoginPage = () => {
   const navigate = useNavigate();
-  const OnSubmitHandler = (values: ILoginUser) => {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const OnSubmitHandler = async (values: ILoginUser) => {
+    if (!executeRecaptcha) return;
+    const reCaptchaToken = await executeRecaptcha();
+    values.reCaptchaToken = reCaptchaToken;
+    //setFieldValue("reCaptchaToken", reCaptchaToken);
     console.log(values);
     requests
       .post<ILoginUserResponse>(REQUESTS_URLS_PATHS.LOGIN_USER, values)
@@ -36,6 +42,7 @@ const LoginPage = () => {
   const initialValues: ILoginUser = {
     email: "",
     password: "",
+    reCaptchaToken: "",
   };
   const formik = useFormik({
     initialValues: initialValues,

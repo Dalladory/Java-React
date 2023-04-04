@@ -10,6 +10,7 @@ export interface IRegisterUser {
 export interface ILoginUser {
   email: string;
   password: string;
+  reCaptchaToken: string;
 }
 
 export interface ILoginUserResponse {

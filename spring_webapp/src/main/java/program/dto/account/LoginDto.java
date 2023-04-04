@@ -13,4 +13,5 @@ public class LoginDto {
 
     private String email;
     String password;
+    String reCaptchaToken;
 }
