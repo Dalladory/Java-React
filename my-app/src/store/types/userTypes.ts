@@ -5,6 +5,7 @@ export interface IRegisterUser {
   lastname: string;
   email: string;
   password: string;
+  reCaptchaToken: string;
 }
 
 export interface ILoginUser {

@@ -13,10 +13,16 @@ import {
 } from "../../store/types/userTypes";
 import { setJwtToken } from "../../services/jwtService";
 import { store } from "../../store";
+import { useGoogleReCaptcha } from "react-google-recaptcha-v3";
 
 const RegisterPage = () => {
   const navigate = useNavigate();
-  const OnSubmitHandler = (values: IRegisterUser) => {
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  const OnSubmitHandler = async (values: IRegisterUser) => {
+    if (!executeRecaptcha) return;
+    const reCaptchaToken = await executeRecaptcha();
+    values.reCaptchaToken = reCaptchaToken;
     console.log(values);
     requests
       .post<IRegisterUserResponse>(REQUESTS_URLS_PATHS.REGISTER_USER, values)
@@ -38,6 +44,7 @@ const RegisterPage = () => {
     lastname: "",
     email: "",
     password: "",
+    reCaptchaToken: "",
   };
   const formik = useFormik({
     initialValues: initialValues,

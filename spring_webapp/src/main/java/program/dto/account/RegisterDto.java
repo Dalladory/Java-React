@@ -14,4 +14,6 @@ public class RegisterDto {
     private String lastname;
     private String email;
     private String password;
+    private String reCaptchaToken;
+
 }
