@@ -16,6 +16,7 @@ import Login from "./account/login";
 import Register from "./account/register";
 import { useActions } from "./hooks/useActions";
 import LogOutUser from "./account/logOut";
+import ProfilePage from "./account/profile";
 
 export const App: React.FC = () => {
   const { isAuthorized } = useTypedSelector((store) => store.userReducer);
@@ -46,6 +47,7 @@ export const App: React.FC = () => {
           {isAuthorized && (
             <Route path="account">
               <Route path="logout" element={<LogOutUser />} />
+              <Route path="profile" element={<ProfilePage />} />
             </Route>
           )}
         </Route>

@@ -3,10 +3,7 @@ package program.services;
 import org.springframework.web.client.RestOperations;
 import program.configuration.captcha.CaptchaSettings;
 import program.configuration.captcha.GoogleResponse;
-import program.dto.account.GoogleAuthDto;
-import program.dto.account.LoginDto;
-import program.dto.account.AuthResponseDto;
-import program.dto.account.RegisterDto;
+import program.dto.account.*;
 import program.configuration.security.JwtService;
 import program.constants.Roles;
 import program.entities.UserEntity;
@@ -20,8 +17,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import program.repositories.UserRoleRepository;
 import program.services.classes.GoogleAuthService;
-
-import java.util.ArrayList;
 
 @Service
 @RequiredArgsConstructor
@@ -122,6 +117,20 @@ public class AccountService {
         return AuthResponseDto.builder()
                 .token(jwtToken)
                 .build();
+    }
+
+    public UserProfileDto GetUserProfile(String email) {
+        var optional =repository.findByEmail(email);
+        if(!optional.isEmpty()) {
+            var user = optional.get();
+            return UserProfileDto.builder()
+                    .id(user.getId())
+                    .email(email)
+                    .name(user.getFirstName())
+                    .surname(user.getLastName())
+                    .build();
+        }
+        return  null;
     }
 
 }

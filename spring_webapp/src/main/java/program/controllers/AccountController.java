@@ -1,18 +1,10 @@
 package program.controllers;
 
-import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import program.dto.account.GoogleAuthDto;
-import program.dto.account.LoginDto;
-import program.dto.account.AuthResponseDto;
-import program.dto.account.RegisterDto;
+import org.springframework.web.bind.annotation.*;
+import program.dto.account.*;
 import program.services.AccountService;
-import program.services.classes.GoogleAuthService;
 
 @RestController
 @RequestMapping("/account")
@@ -39,5 +31,11 @@ public class AccountController {
             @RequestBody GoogleAuthDto request
     ) {
         return ResponseEntity.ok(service.GoogleLogin(request));
+    }
+    @GetMapping("/{email}/profile")
+    public ResponseEntity<UserProfileDto> authenticate(
+            @PathVariable String email
+    ) {
+        return ResponseEntity.ok(service.GetUserProfile(email));
     }
 }
