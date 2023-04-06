@@ -14,6 +14,7 @@ import {
 import requests, { REQUESTS_URLS_PATHS } from "../../services/apiService";
 import { setJwtToken } from "../../services/jwtService";
 import { store } from "../../store";
+import GoogleAuth from "../googleauth/GoogleAuth";
 
 const LoginPage = () => {
   const navigate = useNavigate();
@@ -72,7 +73,7 @@ const LoginPage = () => {
                   <AiFillFacebook className="mr-2" /> Facebook
                 </p>
                 <p className="border shadow-lg hover:shadow-xl px-6 py-2 relative flex items-center">
-                  <FcGoogle className="mr-2" /> Google
+                  <GoogleAuth />
                 </p>
               </div>
               <div className="flex flex-col mb-4">
@@ -95,7 +96,10 @@ const LoginPage = () => {
                   onChange={handleChange}
                 />
               </div>
-              <button className="w-full py-3 mt-8 bg-indigo-600 hover:bg-indigo-500 relative text-white">
+              <button
+                type="submit"
+                className="w-full py-3 mt-8 bg-indigo-600 hover:bg-indigo-500 relative text-white"
+              >
                 Sign In
               </button>
               <Link to="../register" className="relative">

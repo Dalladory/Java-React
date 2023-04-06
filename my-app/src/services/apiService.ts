@@ -63,5 +63,6 @@ export default requests;
 
 export enum REQUESTS_URLS_PATHS {
   LOGIN_USER = "account/login",
+  LOGIN_USER_GOOGLE = "account/googlelogin",
   REGISTER_USER = "account/register",
 }

@@ -3,6 +3,7 @@ package program.services;
 import org.springframework.web.client.RestOperations;
 import program.configuration.captcha.CaptchaSettings;
 import program.configuration.captcha.GoogleResponse;
+import program.dto.account.GoogleAuthDto;
 import program.dto.account.LoginDto;
 import program.dto.account.AuthResponseDto;
 import program.dto.account.RegisterDto;
@@ -18,6 +19,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import program.repositories.UserRoleRepository;
+import program.services.classes.GoogleAuthService;
 
 import java.util.ArrayList;
 
@@ -33,7 +35,7 @@ public class AccountService {
     private final CaptchaSettings captchaSettings;
     private final RestOperations restTemplate;
     protected static final String RECAPTCHA_URL_TEMPLATE = "https://www.google.com/recaptcha/api/siteverify?secret=%s&response=%s";
-
+    private final GoogleAuthService googleAuthService;
     public AuthResponseDto register(RegisterDto request) {
         String url = String.format(RECAPTCHA_URL_TEMPLATE, captchaSettings.getSecret(), request.getReCaptchaToken());
         final GoogleResponse googleResponse = restTemplate.getForObject(url, GoogleResponse.class);
@@ -78,6 +80,44 @@ public class AccountService {
         );
         var user = repository.findByEmail(request.getEmail())
                 .orElseThrow();
+        var jwtToken = jwtService.generateAccessToken(user);
+        return AuthResponseDto.builder()
+                .token(jwtToken)
+                .build();
+    }
+
+    public AuthResponseDto GoogleLogin(GoogleAuthDto model) {
+        var googleToken = model.getToken();
+        String accessToken = null;
+        UserEntity user = null;
+        try{
+            var googlePayload = googleAuthService.verify(googleToken);
+            var optional = repository.findByEmail(googlePayload.getEmail());
+            if(!optional.isEmpty()) {
+                user = optional.get();
+            }
+
+            if(optional.isEmpty()) {
+                user = UserEntity.builder()
+                        .firstName((String) googlePayload.get("family_name"))
+                        .lastName((String) googlePayload.get("given_name"))
+                        .email(googlePayload.getEmail())
+                        .phone("093 839 43 23")
+                        .password("")
+                        .build();
+                repository.save((user));
+            }
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            googlePayload.getEmail(),
+                            ""
+                    )
+            );
+        }
+        catch(Exception ex) {
+
+        }
+
         var jwtToken = jwtService.generateAccessToken(user);
         return AuthResponseDto.builder()
                 .token(jwtToken)

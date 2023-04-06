@@ -117,7 +117,10 @@ const RegisterPage = () => {
                   onChange={handleChange}
                 />
               </div>
-              <button className="w-full py-3 mt-8 bg-indigo-600 hover:bg-indigo-500 relative text-white">
+              <button
+                type="submit"
+                className="w-full py-3 mt-8 bg-indigo-600 hover:bg-indigo-500 relative text-white"
+              >
                 Create account
               </button>
               <Link to="../login" className="relative">

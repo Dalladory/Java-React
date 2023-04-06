@@ -14,6 +14,10 @@ export interface ILoginUser {
   reCaptchaToken: string;
 }
 
+export interface IGoogleLoginUser {
+  token: string;
+}
+
 export interface ILoginUserResponse {
   token: string;
 }
